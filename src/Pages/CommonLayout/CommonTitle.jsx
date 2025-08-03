@@ -1,0 +1,1 @@
+export const commonTitle="Shield Motor Group"

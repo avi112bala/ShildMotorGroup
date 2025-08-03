@@ -1,0 +1,23 @@
+
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --button_background: #012653;
+    --common_text_color: #012653;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+.landingcontainer::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+
