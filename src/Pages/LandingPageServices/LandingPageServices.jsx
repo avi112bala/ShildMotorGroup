@@ -8,7 +8,7 @@ const LandingPageServices = () => {
         <h2 className='text-[#2E3192] font-bold text-2xl md:text-4xl text-center' style={{ fontFamily: "Bebas Neue" }}>
           OUR COMPREHENSIVE TRANSPORTATION SOLUTIONS
         </h2>
-        <p className='text-sm md:text-md text-center mb-4'>
+        <p className='text-sm md:text-lg text-center mb-4'>
           We do not just move loads; we move with purpose at Tarzan Transport, offering specialized services that ensure your cargo always reaches its destination on time, safely, and in an efficient manner.
         </p>
       </div>

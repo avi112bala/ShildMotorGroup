@@ -1,14 +1,12 @@
-import {  useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { FiLoader, FiEye, FiEyeOff } from "react-icons/fi";
-import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { Call, lock, LOGO_IMAGE, User } from "../../Media/Media";
+import { Call, lock, LOGO_IMAGE, towinggif, User } from "../../Media/Media";
 import { AuthUsers } from "../../Store/AuthStore";
 import CustomButton from "../../Utils/CustomButton";
 import { useStepsStore } from "../../Store/ServicesSteps";
-
-
+import UserService from "../../api/UserServices";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -22,38 +20,55 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showLoader, setShowLoader] = useState(false); // State for controlling the loader visibility
 
-  const setMobileNumber = AuthUsers((state) => state.setMobileNumber);
-  const setFullName = AuthUsers((state) => state.setFullName);
-  const setPassword = AuthUsers((state) => state.setPassword);
   const setCurrentStep = useStepsStore((state) => state.setCurrentStep);
-
 
   const handleLogoClick = () => {
     navigate("/");
-    setCurrentStep(1)
+    setCurrentStep(1);
   };
 
   const onSubmit = async (data) => {
-    if (data.password !== data.confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
-    }
+    setLoading(true);
+    setShowLoader(true);
+
     try {
-      setLoading(true);
-      const reqData = { type: "UR", mobile: data.mobile };
-      // const res = await generateOtp(reqData);
-      if (res.status === 200) {
-        setMobileNumber(data.mobile);
-        setFullName(data.fullName);
-        setPassword(data.password);
-        toast.success("Otp Generated Successfully!");
-        navigate("/auth/confirm");
+      const response = await fetch("http://localhost:8080/api/user/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Phone: data.mobile,
+          Password: data.password,
+          name: data.fullName,
+          comfirmpassword: data.confirmPassword,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // setResponseMessage("Account created successfully! Welcome, " + data.username);
+        sessionStorage.setItem("authToken", data.token);
+        UserService.showToast("Success!", "Sign Up Successfully!");
+        setShowLoader(false);
+        setTimeout(() => {
+          navigate("/services");
+        }, 1000);
+      } else {
+        const errorData = await response.json();
+        UserService.showToastError("Error!", errorData.message);
+        // setResponseMessage(`${errorData.message}`);
+        setShowLoader(false);
       }
     } catch (error) {
-      toast.error(error.response?.data?.data || "An error occurred!");
+      // setResponseMessage("An error occurred: " + error.message);
+      UserService.showToastError("An error occurred", error.message);
+      setShowLoader(false);
     } finally {
       setLoading(false);
+      setShowLoader(false);
     }
   };
 
@@ -67,7 +82,9 @@ const SignUp = () => {
             alt="Logo"
             onClick={handleLogoClick}
           />
-          <h4 className="text-xl sm:text-2xl font-bold text-center text-[#000000]">Sign Up</h4>
+          <h4 className="text-xl sm:text-2xl font-bold text-center text-[#000000]">
+            Sign Up
+          </h4>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -82,7 +99,10 @@ const SignUp = () => {
                 placeholder="Enter full name"
                 {...register("fullName", {
                   required: "Full name is required",
-                  maxLength: { value: 12, message: "Max 12 characters allowed" },
+                  maxLength: {
+                    value: 12,
+                    message: "Max 12 characters allowed",
+                  },
                   pattern: {
                     value: /^[A-Za-z\s]+$/,
                     message: "Only alphabets allowed",
@@ -94,12 +114,18 @@ const SignUp = () => {
                 {/* <img src="/images/user.svg" alt="User Icon" className="w-5 h-5" /> */}
                 <img src={User} alt="User Icon" className="w-5 h-5" />
               </div>
-              {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>}
+              {errors.fullName && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.fullName.message}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="mt-6">
-            <label className="block mb-1 text-sm text-[#898989]">Phone Number</label>
+            <label className="block mb-1 text-sm text-[#898989]">
+              Phone Number
+            </label>
             <div className="relative">
               <input
                 type="tel"
@@ -111,18 +137,28 @@ const SignUp = () => {
                   required: "Mobile Number is required",
                   validate: (value) => {
                     const onlyNumbers = /^[0-9]{10}$/;
-                    return onlyNumbers.test(value) || "Mobile Number must be exactly 10 digits";
+                    return (
+                      onlyNumbers.test(value) ||
+                      "Mobile Number must be exactly 10 digits"
+                    );
                   },
                 })}
                 onInput={(e) => {
-                  e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, "");
+                  e.currentTarget.value = e.currentTarget.value.replace(
+                    /[^0-9]/g,
+                    ""
+                  );
                 }}
                 className={`w-full rounded-xl border-[1px] border-[#CBCBCB] border-l-4 border-l-[#012653] bg-[#F8F8F8] py-2 pl-14 pr-4 text-black outline-none focus:ring-2 focus:ring-[#012653] ${
                   errors.mobile ? "border-red-500" : "border-[#CBCBCB]"
                 }  border-l-[#012653] bg-[#F8F8F8] py-2 sm:py-2 pl-14 pr-4  text-black outline-none focus:ring-2 focus:ring-[#012653]`}
               />
 
-              {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile.message}</p>}
+              {errors.mobile && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.mobile.message}
+                </p>
+              )}
               <div className="absolute left-3 top-2.5 sm:top-3 text-gray-400">
                 <img src={Call} alt="Phone Icon" className="w-5 h-5 " />
               </div>
@@ -140,7 +176,8 @@ const SignUp = () => {
                 {...register("password", {
                   required: "Password is required",
                   pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                     message:
                       "Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character",
                   },
@@ -150,11 +187,18 @@ const SignUp = () => {
               <div className="absolute left-3 top-2.5 text-gray-400">
                 <img src={lock} alt="Lock Icon" className="w-5 h-5" />
               </div>
-              <span className="absolute right-3 top-2.5 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+              <span
+                className="absolute right-3 top-2.5 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </span>
             </div>
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
           {/* Confirm Password Input */}
           <div className="mt-6">
@@ -165,7 +209,9 @@ const SignUp = () => {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
-                {...register("confirmPassword", { required: "Confirm Password is required" })}
+                {...register("confirmPassword", {
+                  required: "Confirm Password is required",
+                })}
                 className="w-full rounded-xl border-[1px] border-[#CBCBCB] border-l-4 border-l-[#012653] bg-[#F8F8F8] py-2 pl-14 pr-10 text-black outline-none"
               />
               <div className="absolute left-3 top-2.5 text-gray-400">
@@ -194,12 +240,22 @@ const SignUp = () => {
           </div>
           <div className="flex items-center justify-center mt-14 mb-6 gap-1">
             <h2 className="text-[#898989]">Already have an account?</h2>
-            <Link className=" hover:text-[#8f25f8b4]" to={"/auth/signin"} style={{color:`var(--common_text_color)`}}>
+            <Link
+              className=" hover:text-[#8f25f8b4]"
+              to={"/auth/signin"}
+              style={{ color: `var(--common_text_color)` }}
+            >
               Log In
             </Link>
           </div>
         </form>
       </div>
+      {showLoader && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-20">
+          {/* <img src="/images/towber.gif" alt="Loading" className="w-24" /> */}
+          <img src={towinggif} alt="Loading" className="w-24" />
+        </div>
+      )}
     </div>
     // </div>
   );

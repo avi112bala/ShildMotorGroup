@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
 import { useStepsStore } from "../../Store/ServicesSteps";
+import getSetting from "../../api/UserServices.jsx";
 
 const mapContainerStyle = {
   width: "100%",
   height: "100%",
 };
 
-const fallbackCenter = {
-  lat: 40.712776,
-  lng: -74.005974,
-};
+// const fallbackCenter = {
+//   lat: 40.712776,
+//   lng: -74.005974,
+// };
 
 const Map = () => {
   const { isLoaded } = useLoadScript({
-    // googleMapsApiKey: "AIzaSyBCfZxDjzBIz_cit9zk8Bp5l7d6VIRXAvc", // Replace with your API key  
+    // googleMapsApiKey: "AIzaSyBCfZxDjzBIz_cit9zk8Bp5l7d6VIRXAvc", // Replace with your API key
     // googleMapsApiKey: "AIzaSyDHCriaDbKEue6Bahn71bfcTipV8MgKryQ",
-    googleMapsApiKey: "AIzaSyDXk06jpf-i4PtF1p65i5g73BAbms0agWc",
+    // googleMapsApiKey: "AIzaSyDXk06jpf-i4PtF1p65i5g73BAbms0agWc",
+    // googleMapsApiKey: "AIzaSyBvtNQDxMuJz0QSNvAuepTvFVka60sv588",
+    googleMapsApiKey: "AIzaSyBdWmYu_njpBYS4im2omZNkmtwvq3xqkZ8",
     libraries: ["places"],
   });
 
@@ -28,28 +31,30 @@ const Map = () => {
   const [markers, setMarkers] = useState([]);
   const [_address, setAddress] = useState("");
   const [_formState, setFormState] = useState({ location: "" });
-  const [center, setCenter] = useState(fallbackCenter);
+  const [center, setCenter] = useState("");
   const [zoom, setZoom] = useState(14);
 
-  useEffect(() => {
-    const fetchDefaultCenter = async () => {
-      try {
-        const response = await axiosInstance.get("api/setting");
-        const hq = response?.data?.response?.[0]?.HeadquaterLocation;
+  // useEffect(() => {
+  //   const fetchDefaultCenter = async () => {
+  //     try {
+  //       const response = await getSetting();
+  //       const hq = response?.data?.response?.[0]?.HeadquaterLocation;
 
-        if (hq?.lat && hq?.lng) {
-          setCenter({ lat: hq.lat, lng: hq.lng });
-        }
-      } catch (err) {
-        console.error("Failed to fetch HQ location:", err);
-      }
-    };
+  //       if (hq?.lat && hq?.lng) {
+  //         setCenter({ lat: hq.lat, lng: hq.lng });
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to fetch HQ location:", err);
+  //     }
+  //   };
 
-    fetchDefaultCenter();
-  }, []);
+  //   fetchDefaultCenter();
+  // }, []);
 
   useEffect(() => {
     if (currentLocation) {
+      console.log(currentLocation, "currentLocation");
+      
       setMarkers([
         {
           lat: currentLocation.latitude,
@@ -63,6 +68,40 @@ const Map = () => {
       setZoom(14);
     }
   }, [currentLocation]);
+
+  useEffect(() => {
+
+     const fetchDefaultCenter = async () => {
+       try {
+         const response = await getSetting();
+         const hq = response?.data?.response?.[0]?.HeadquaterLocation;
+
+         if (hq?.lat && hq?.lng) {
+           setCenter({ lat: hq.lat, lng: hq.lng });
+         }
+       } catch (err) {
+         console.error("Failed to fetch HQ location:", err);
+       }
+     };
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCenter({ lat: latitude, lng: longitude });
+          setMarkers([{ lat: latitude, lng: longitude, time: new Date() }]);
+          fetchAddress(latitude, longitude); // reverse geocode to address
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+          // fallback to HQ or New York if denied
+          fetchDefaultCenter();
+        }
+      );
+    } else {
+      fetchDefaultCenter();
+    }
+  }, []);
+
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -87,7 +126,7 @@ const Map = () => {
   };
 
   const fetchAddress = async (lat, lng) => {
-    const apiKey = "AIzaSyAsVrHxXGITDH-g6ozMNeoEAtiFuhGulwI";
+    const apiKey = "AIzaSyBdWmYu_njpBYS4im2omZNkmtwvq3xqkZ8";
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
     try {
@@ -116,8 +155,6 @@ const Map = () => {
       console.error("Error fetching address:", error);
     }
   };
-
-  console.log(currentStep,"currentStepcurrentStep");
   
 
   return (

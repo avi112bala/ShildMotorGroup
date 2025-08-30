@@ -12,7 +12,7 @@ const DefaultLayout = ({ children }) => {
 
   // Authentication check
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("authToken");
     const routes = [
       "/auth/signin",
       "/auth/signup",
@@ -21,7 +21,6 @@ const DefaultLayout = ({ children }) => {
       "/auth/confirm",
       "/auth/verify",
       "/auth/forget",
-      "/services"
     ];
     if (!token && !routes.includes(location.pathname)) {
       navigate("/auth/signin");

@@ -1,12 +1,12 @@
-
 @import "tailwindcss";
 
 @layer base {
   :root {
     --button_background: #012653;
     --common_text_color: #012653;
+    --cancel_Button_background: #ff2f2f;
   }
-  
+
   * {
     margin: 0;
     padding: 0;
@@ -14,10 +14,39 @@
   }
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .landingcontainer::-webkit-scrollbar {
   display: none;
 }
 
+/* slick-dots default */
+.slick-dots li button:before {
 
+  /* dot size */
+  color: gray;
+  /* default color */
+  opacity: 0.5;
+}
 
+.slick-dots li.slick-active button:before {
+  color: #FFD700 !important;
+  /* active dot = yellow */
+  font-size: 15px;
+  opacity: 1;
+}
+
+.custom-dots .slick-dots li button:before {
+  color: #cbd5e1;
+  /* slate-300 default */
+  font-size: 15px;
+}
+
+.custom-dots .slick-dots li.slick-active button:before {
+  color: #facc15 !important;
+  /* Tailwind yellow-400 */
+  font-size: 25px;
+}
 

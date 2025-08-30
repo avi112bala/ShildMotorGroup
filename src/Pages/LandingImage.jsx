@@ -5,10 +5,14 @@ import { BackGround_Image, SliderImage1, SliderImage2, SliderImage3, SliderImage
 import Slider from 'react-slick';
 import LandingPageServices from './LandingPageServices/LandingPageServices';
 import LandingPageMap from './LandingPageServices/LandingPageMap';
+import OurValues from './LandingPageServices/OurValues';
+import Whychoose from './LandingPageServices/Whychoose';
+import Footer from './LandingPageServices/Footer';
+import Clientfeedback from './LandingPageServices/Clientfeedback';
 
 const LandingImage = () => {
   //SLIDER START HERE
-  let sliderRef = useRef(null);
+
   // const play = () => {
   //   sliderRef.slickPlay();
   // };
@@ -24,6 +28,7 @@ const LandingImage = () => {
     autoplay: true,
     autoplaySpeed: 2000
   };
+  let sliderRef = useRef(null);
   //SLIDER END HERE
   return (
     <>
@@ -145,6 +150,10 @@ const LandingImage = () => {
         </div>
         <LandingPageServices />
         <LandingPageMap />
+        <OurValues/>
+        <Whychoose/>
+        <Clientfeedback/>
+        <Footer/>
       </div>
     </>
   );

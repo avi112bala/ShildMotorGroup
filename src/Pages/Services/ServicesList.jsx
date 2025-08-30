@@ -1,40 +1,39 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import WelcomeText from "../CommonLayout/WelcomeText";
 import { Persongif, Service1, Service2 } from "../../Media/Media";
 import {  useStepsStore } from "../../Store/ServicesSteps";
 
 
-const ServicesList = ({ next }) => {
-  const [hasBookings, setHasBookings] = useState(false);
-  const [bookings, setBookings] = useState([]);
+const ServicesList = () => {
+
 
   const setCurrentStep = useStepsStore((state) => state.setCurrentStep);
   const updateSenderData=useStepsStore((state)=>state.updateSenderData)
 
 
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await getBookingList();
-        const relevantBookings = response.data.data.filter(
-          (booking) =>
-            booking.bookingStatus === "inProgress" ||
-            booking.bookingStatus === "pending" ||
-            booking.bookingStatus === "toDispatcher"
-        );
+  // useEffect(() => {
+  //   const fetchBookings = async () => {
+  //     try {
+  //       const response = await getBookingList();
+  //       const relevantBookings = response.data.data.filter(
+  //         (booking) =>
+  //           booking.bookingStatus === "inProgress" ||
+  //           booking.bookingStatus === "pending" ||
+  //           booking.bookingStatus === "toDispatcher"
+  //       );
 
-        if (relevantBookings.length > 0) {
-          setHasBookings(true);
-          setBookings(relevantBookings);
-        }
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-      }
-    };
+  //       if (relevantBookings.length > 0) {
+  //         setHasBookings(true);
+  //         setBookings(relevantBookings);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching bookings:", error);
+  //     }
+  //   };
 
-    fetchBookings();
-  }, []);
+  //   fetchBookings();
+  // }, []);
   useEffect(() => {
     sessionStorage.removeItem("Bookedcomplete");
 

@@ -8,6 +8,8 @@ import ServicesNearestGarage from "./ServicesNearestGarage";
 import ResponsiveHeader from "../../MainHeader/Header";
 import BookingFor from "../Refrijretorq/Refrerater";
 import DeliveryDetails from "../DeliveryLoaction/DeliveryDetails";
+import MainInvoice from "../MainInvoice/MainInvoice";
+import ConfirmBooking from "../ConfirmBooking/ConfirmBooking"
 
 const ServicesPage = () => {
   const currentStep = useStepsStore((state) => state.currentStep);
@@ -20,23 +22,22 @@ const ServicesPage = () => {
       <CommonLayout currentStep={currentStep} totalSteps={totalSteps}>
         {currentStep === 1 ? (
           <ServicesList next={() => setCurrentStep(currentStep + 1)} />
-        ) :
-          currentStep === 2 ? (
-            <BookingFor />
-          )
-
-            : currentStep === 3 ? (
-              <ServicesLocation next={() => setCurrentStep(currentStep + 1)} />
-            ) : 
-            currentStep ===4?(
-              <DeliveryDetails next={() => setCurrentStep(currentStep + 1)}/>
-            ):
-            
-            currentStep === 5 ? (
-              <ServicesInvoice next={() => setCurrentStep(currentStep + 1)} />
-            ) : (
-              <ServicesNearestGarage />
-            )}
+        ) : currentStep === 2 ? (
+          <BookingFor />
+        ) : currentStep === 3 ? (
+          <ServicesLocation next={() => setCurrentStep(currentStep + 1)} />
+        ) : currentStep === 4 ? (
+          <DeliveryDetails next={() => setCurrentStep(currentStep + 1)} />
+        ) : currentStep === 5 ? (
+          <ServicesInvoice next={() => setCurrentStep(currentStep + 1)} />
+        ) : currentStep === 6 ? (
+          <MainInvoice next={() => setCurrentStep(currentStep + 1)} />
+        ): currentStep ===7?(
+          <ConfirmBooking/>
+        )
+        : (
+          <ServicesNearestGarage />
+        )}
       </CommonLayout>
     </div>
   );

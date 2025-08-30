@@ -1,25 +1,33 @@
 
-import { useRef, useEffect } from "react";
+import {  useEffect } from "react";
 
-export const useGoogleAutocomplete = (onPlaceSelect) => {
-  const inputRef = useRef<HTMLInputElement>(null);
 
+export const useGoogleAutocomplete = (inputRef, onPlaceSelect) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!window.google || !inputRef.current) return;
+    if (!inputRef.current) return;
+    if (!window.google || !window.google.maps || !window.google.maps.places) {
+      console.warn("Google Maps Places library not loaded.");
+      return;
+    }
 
-      const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-        types: ["geocode"], 
-      });
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        types: ["geocode"],
+        fields: ["geometry", "formatted_address"],
+      }
+    );
 
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        onPlaceSelect(place);
-      });
-    }, 100);
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      onPlaceSelect(place);
+    });
 
-    return () => clearTimeout(timer);
-  }, [onPlaceSelect]);
-
-  return inputRef;
+    return () => {
+      window.google.maps.event.clearInstanceListeners(autocomplete);
+    };
+  }, [inputRef, onPlaceSelect]);
 };
+
+
+

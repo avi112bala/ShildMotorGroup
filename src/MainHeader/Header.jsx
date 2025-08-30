@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { LOGO_IMAGE } from '../Media/Media';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useStepsStore } from '../Store/ServicesSteps';
 
@@ -8,14 +8,20 @@ const ResponsiveHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const currentStep = useStepsStore((state) => state.currentStep);
   const setCurrentStep = useStepsStore((state) => state.setCurrentStep)
-
+  const updateSenderData = useStepsStore((state) => state.updateSenderData);
+const navigate=useNavigate()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   const handleclick = () => {
     setCurrentStep(currentStep - 1);
-    updateSenderData({});
+  }
+
+  const logout=()=>{
+    sessionStorage.clear()
+    updateSenderData({})
+    navigate("/auth/signin");
   }
 
   return (
@@ -23,31 +29,49 @@ const ResponsiveHeader = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
-         { currentStep!==1&&
-          <button onClick={handleclick} className="cursor-pointer">
-            <FiArrowLeft className="h-6 w-6" />
-          </button>
-          }
+          {currentStep !== 1||currentStep !== 7 && (
+            <button onClick={handleclick} className="cursor-pointer">
+              <FiArrowLeft className="h-6 w-6" />
+            </button>
+          )}
           <div className="flex items-center">
             <a href="/" className="text-2xl font-bold text-blue-600">
-              <img src={LOGO_IMAGE} className='rounded-full h-15 w-15' />
+              <img src={LOGO_IMAGE} className="rounded-full h-15 w-15" />
             </a>
           </div>
 
           {/* Desktop Navigation - Now Hidden on ALL screens */}
           <nav className="hidden">
             <div className="flex space-x-8">
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 Home
               </Link>
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 About
               </Link>
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 Services
               </Link>
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 Contact
+              </Link>
+              <Link
+                onClick={() => logout()}
+                className="text-red-700 hover:text-red-500 font-medium"
+              >
+                LogOut
               </Link>
             </div>
           </nav>
@@ -89,18 +113,36 @@ const ResponsiveHeader = () => {
         {isMenuOpen && (
           <div className="mt-4 pb-4">
             <nav className="flex flex-col space-y-3">
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 Home
               </Link>
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 About
               </Link>
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 Services
               </Link>
-              <Link href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link
+                href="#"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
                 Contact
               </Link>
+              <a
+                onClick={() => logout()}
+                className="text-red-700 hover:text-red-500 font-medium cursor-pointer"
+              >
+                LogOut
+              </a>
             </nav>
           </div>
         )}

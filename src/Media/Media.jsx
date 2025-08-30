@@ -23,10 +23,12 @@ import Persongif from "../assets/icons/finaltowingknox.gif"
 import Landingservice1 from "../assets/icons/service1.jpg"
 import Landingservice2 from "../assets/icons/service2.jpg"
 import landingpagemap from "../assets/icons/map.png"
+import towinggif from "../assets/icons/towiiii.gif"
 
 
 export {
     LOGO_IMAGE,
+    towinggif,
     Persongif,
     BackGround_Image,
     Truck1,   
