@@ -16,6 +16,7 @@ const ServicesLocation = () => {
     senderStreet: "",
     sendercity: "",
     senderzipcode: "",
+    senderFullAddress:""
   });
 
   const handleChange = (e) => {
@@ -113,7 +114,9 @@ const ServicesLocation = () => {
         from="pickup"
         label="Pickup Location"
         onLocationSelect={(place) => {
+           console.log(place, "place=======");
           if (place?.address_components) {
+            console.log(place,"place=======")
             let street = "";
             let city = "";
             let postalCode = "";
@@ -139,6 +142,7 @@ const ServicesLocation = () => {
               senderStreet: street.trim(),
               sendercity: city,
               senderzipcode: postalCode,
+              senderFullAddress: place?.formatted_address,
             }));
 
             updateSenderData({
@@ -148,6 +152,7 @@ const ServicesLocation = () => {
                 senderStreet: street.trim(),
                 sendercity: city,
                 senderzipcode: postalCode,
+                senderFullAddress: place?.formatted_address,
               },
             });
           }

@@ -73,7 +73,13 @@ const downloadInvoice = () => {
     body: [
       [
         InvoiceData?.ServiceData?.title || "",
-        `${InvoiceData?.loadingitem} / ${InvoiceData?.secondoption} / ${InvoiceData?.secondoptionref}`,
+        `${InvoiceData?.loadingitem} / ${InvoiceData?.secondoption} / ${
+          InvoiceData?.secondoptionref
+        } ${InvoiceData?.secondoptionref === "cooler"?"":"/"} ${
+          InvoiceData?.secondoptionref === "cooler"
+            ? ""
+            : InvoiceData?.freezervalue
+        }`,
         "1",
         `$${InvoiceData?.totalAmount?.toFixed(2)}`,
       ],
@@ -225,6 +231,10 @@ const downloadInvoice = () => {
                 <br /> {InvoiceData?.secondoption}
                 <br />
                 {InvoiceData?.secondoptionref}
+                <br />
+                {InvoiceData?.secondoptionref === "cooler"
+                  ? ""
+                  : InvoiceData?.freezervalue}
               </td>
               <td className="p-3 border-b">1</td>
               <td className="p-3 border-b">

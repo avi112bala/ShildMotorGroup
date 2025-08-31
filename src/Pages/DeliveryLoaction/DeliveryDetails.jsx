@@ -15,6 +15,7 @@ const DeliveryDetails = () => {;
     receiverStreet: "",
     receivercity: "",
     receiverzipcode: "",
+    receiverFullAddress:""
   });
 
   const handleChange=(e)=>{
@@ -147,6 +148,7 @@ const DeliveryDetails = () => {;
               receiverStreet: street.trim(),
               receivercity: city,
               receiverzipcode: postalCode,
+              receiverFullAddress:place?.formatted_address
             }));
 
             updateSenderData({
@@ -156,6 +158,7 @@ const DeliveryDetails = () => {;
                 receiverStreet: street.trim(),
                 receivercity: city,
                 receiverzipcode: postalCode,
+                receiverFullAddress: place?.formatted_address,
               },
             });
           }

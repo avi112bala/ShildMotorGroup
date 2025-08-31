@@ -7,6 +7,7 @@ import SignUp from './Pages/SignUp/SignUp'
 import ForgetPassword from './Pages/ForgetPassword/ForgetPassword'
 import ServicesPage from './Pages/Services/Services'
 import PageWrapper from './DefualtPage/Pagewrapper'
+import Termsandcondition from './Pages/Termsandcondition/Termsandcondition'
 
 function App() {
 
@@ -14,7 +15,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<MainHeader />}></Route>
+          <Route path="/" element={<MainHeader />}></Route>
           <Route
             path="/auth/signin"
             element={
@@ -23,7 +24,6 @@ function App() {
                   <SignIn />
                 </PageWrapper>
               </DefaultLayout>
-
             }
           />
           <Route
@@ -46,6 +46,7 @@ function App() {
               </DefaultLayout>
             }
           />
+          
           <Route
             path="/services"
             element={
@@ -56,10 +57,20 @@ function App() {
               </DefaultLayout>
             }
           />
+          <Route
+            path="/terms-condition"
+            element={
+              <DefaultLayout>
+                <PageWrapper>
+                  <Termsandcondition />
+                </PageWrapper>
+              </DefaultLayout>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
 export default App

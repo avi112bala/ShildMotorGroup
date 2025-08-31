@@ -18,6 +18,7 @@ const navigate=useNavigate()
     setCurrentStep(currentStep - 1);
   }
 
+
   const logout=()=>{
     sessionStorage.clear()
     updateSenderData({})
@@ -29,11 +30,12 @@ const navigate=useNavigate()
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          {currentStep !== 1||currentStep !== 7 && (
-            <button onClick={handleclick} className="cursor-pointer">
-              <FiArrowLeft className="h-6 w-6" />
-            </button>
-          )}
+          {currentStep !== 1 && currentStep !== 7 && (
+              <button onClick={handleclick} className="cursor-pointer">
+                <FiArrowLeft className="h-6 w-6" />
+              </button>
+            )}
+
           <div className="flex items-center">
             <a href="/" className="text-2xl font-bold text-blue-600">
               <img src={LOGO_IMAGE} className="rounded-full h-15 w-15" />
@@ -44,7 +46,7 @@ const navigate=useNavigate()
           <nav className="hidden">
             <div className="flex space-x-8">
               <Link
-                href="#"
+                to="/"
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 Home
@@ -56,7 +58,7 @@ const navigate=useNavigate()
                 About
               </Link>
               <Link
-                href="#"
+                to="/services"
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 Services
@@ -66,6 +68,12 @@ const navigate=useNavigate()
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 Contact
+              </Link>
+              <Link
+                to="/terms-condition"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
+                Terms & Conditions
               </Link>
               <Link
                 onClick={() => logout()}
@@ -114,7 +122,7 @@ const navigate=useNavigate()
           <div className="mt-4 pb-4">
             <nav className="flex flex-col space-y-3">
               <Link
-                href="#"
+                to="/"
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 Home
@@ -126,7 +134,7 @@ const navigate=useNavigate()
                 About
               </Link>
               <Link
-                href="#"
+                to="/services"
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 Services
@@ -136,6 +144,12 @@ const navigate=useNavigate()
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 Contact
+              </Link>
+              <Link
+                to="/terms-condition"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
+                Terms & Conditions
               </Link>
               <a
                 onClick={() => logout()}

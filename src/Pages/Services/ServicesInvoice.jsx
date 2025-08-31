@@ -6,12 +6,15 @@ import UserService from '../../api/UserServices';
 const ServicesInvoice = () => {
   const [loading,setLoading]=useState(false)
   const [totalmiles,setTotalmiles]=useState("")
+  const [totaltime, setTotaltime] = useState("");
     const senderdata=useStepsStore((state)=>state.senderdata)
     const setCurrentStep = useStepsStore((state) => state.setCurrentStep);
     const setInvoice = invoiceStore((state) => state.setInvoice);
     const updateSenderData = useStepsStore((state) => state.updateSenderData);
 
   console.log(senderdata,"allcontextdata");
+  console.log(totaltime, "totaltime");
+  
 
   function getDistance(origin, destination, callback) {
     if (!window.google) return;
@@ -29,7 +32,9 @@ const ServicesInvoice = () => {
           const result = response.rows[0].elements[0];
           const distance = result.distance.text;
           const duration = result.duration.text;
-          callback({ distance, duration });
+           const durationValue = result.duration.value;
+            const hours = (durationValue / 3600).toFixed(2);
+          callback({ distance, duration,totalhours:hours });
         } else {
           console.error("DistanceMatrix failed:", status);
         }
@@ -40,38 +45,78 @@ const ServicesInvoice = () => {
 
   // Example usage:
 getDistance(
-  "81 Taralake St NE Calgary Alberta",
-  "100 Main St Toronto Ontario",
+  senderdata?.senderDetails?.senderFullAddress,
+  senderdata?.receiverDetails?.receiverFullAddress,
   (res) => {
     setTotalmiles(res.distance);
+    setTotaltime(res.totalhours);
     console.log("Distance:", res.distance, "Duration:", res.duration);
   }
 );
 
 
-  const totalamount=()=>{    
-   const miles = parseFloat(totalmiles.replace(/,/g, "")) * 0.621371;
+  // const totalamount=()=>{    
+  //  const miles = parseFloat(totalmiles.replace(/,/g, "")) * 0.621371;
 
-    let amount = 0;
-    if (
-      senderdata?.ServiceData?.title === "Refrigerated Division" &&
-      senderdata?.secondoption === "triaxle"
-    ) {
-       amount=3.50*miles
-    }else if(  senderdata?.ServiceData?.title === "Refrigerated Division" &&
-      senderdata?.secondoption === "tendemaxle"){
-         amount=3.00*miles;
-      }else if (
-        senderdata?.ServiceData?.title === "Dry Division" &&
-        senderdata?.secondoption === "triaxle"
-      ) {
-         amount=3.25*miles;
-      }else{
-         amount = 2.75 * miles;
-      }
-       updateSenderData({ key: "totalAmount", value: amount?.toFixed(2) });
-       return amount
-  }
+  //   let amount = 0;
+  //   if (
+  //     senderdata?.ServiceData?.title === "Refrigerated Division" &&
+  //     senderdata?.secondoption === "triaxle"
+  //   ) {
+  //      amount=3.50*miles
+  //   }else if(  senderdata?.ServiceData?.title === "Refrigerated Division" &&
+  //     senderdata?.secondoption === "tendemaxle"){
+  //        amount=3.00*miles;
+  //     }else if (
+  //       senderdata?.ServiceData?.title === "Dry Division" &&
+  //       senderdata?.secondoption === "triaxle"
+  //     ) {
+  //        amount=3.25*miles;
+  //     }else{
+  //        amount = 2.75 * miles;
+  //     }
+  //      updateSenderData({ key: "totalAmount", value: amount?.toFixed(2) });
+  //      return amount
+  // }
+
+ const totalamount = () => {
+   const miles = parseFloat(totalmiles.replace(/,/g, "")) * 0.621371;
+   console.log(miles,"miles");
+   
+   let amount = 0;
+
+   if (miles > 0 && miles <= 200) {
+     // hourly rate instead of per-mile
+     amount = totaltime * 80; // totaltime = hours from DistanceMatrix
+   } else if (miles > 350 && miles <= 400) {
+     amount = 3.5 * miles;
+   } else if (miles > 400 && miles <= 1000) {
+     amount = 3.0 * miles;
+   } else if (miles > 1000) {
+     // pick a base rate, e.g. $2.80
+     amount = 2.8 * miles;
+   }
+
+   // Service-specific adjustments
+   if (
+     senderdata?.ServiceData?.title === "Refrigerated Division" &&
+     senderdata?.secondoption === "tendemaxle"
+   ) {
+     amount = 3.0 * miles;
+   } else if (
+     senderdata?.ServiceData?.title === "Dry Division" &&
+     senderdata?.secondoption === "triaxle"
+   ) {
+     amount = 3.25 * miles;
+   } else {
+     // default fallback
+     amount = amount || 2.75 * miles;
+   }
+
+   updateSenderData({ key: "totalAmount", value: amount?.toFixed(2) });
+   return amount;
+ };
+
 
   useEffect(()=>{
     totalamount()

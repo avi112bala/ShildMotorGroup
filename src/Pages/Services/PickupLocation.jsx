@@ -19,7 +19,7 @@ useEffect(() => {
   autocomplete.addListener("place_changed", () => {
     const place = autocomplete.getPlace();
     if (place && onLocationSelect) {
-      onLocationSelect(place, from); // pass place + type (pickup/delivery)
+      onLocationSelect(place, from);
     }
   });
 }, [onLocationSelect, from]);
