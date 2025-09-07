@@ -34,7 +34,7 @@ const SignUp = () => {
     setShowLoader(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/user/signup", {
+      const response = await fetch("https://smgserver.onrender.com/api/user/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

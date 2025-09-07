@@ -107,7 +107,7 @@ const downloadInvoice = () => {
   const ConfirmBooking = async () => {
     setLoading(true);
     const response = await fetch(
-      "http://localhost:8080/invoice/confirmbooking",
+      "https://smgserver.onrender.com/invoice/confirmbooking",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -127,7 +127,7 @@ const downloadInvoice = () => {
 
   const getinvoicedata = async () => {
     const response = await fetch(
-      `http://localhost:8080/invoice/getsingleinvoice/${invoice}`,
+      `https://smgserver.onrender.com/invoice/getsingleinvoice/${invoice}`,
       {
         method: "GET",
         headers: {

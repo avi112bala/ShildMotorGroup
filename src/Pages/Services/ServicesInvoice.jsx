@@ -145,7 +145,7 @@ getDistance(
         const creatinvoice = async () => {
           setLoading(true);
           const response = await fetch(
-            "http://localhost:8080/invoice/createinvoice",
+            "https://smgserver.onrender.com/invoice/createinvoice",
             {
               method: "POST",
               headers: {

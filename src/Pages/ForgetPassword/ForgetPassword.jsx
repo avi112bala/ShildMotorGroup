@@ -35,7 +35,7 @@ const ForgetPassword = () => {
   const updatePassword = async (data) => {
      setLoading(true);
      setShowLoader(true);
-    const res = await fetch("http://localhost:8080/api/forgotpassword/update", {
+    const res = await fetch("https://smgserver.onrender.com/api/forgotpassword/update", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

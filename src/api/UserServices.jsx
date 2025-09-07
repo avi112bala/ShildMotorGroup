@@ -5,7 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 // Base URL for your API
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = "https://smgserver.onrender.com/api";
 // const BASE_URL = 'http://localhost:5000/api';
 
 // Configure Axios
