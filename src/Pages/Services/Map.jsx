@@ -19,7 +19,7 @@ const Map = () => {
     // googleMapsApiKey: "AIzaSyDHCriaDbKEue6Bahn71bfcTipV8MgKryQ",
     // googleMapsApiKey: "AIzaSyDXk06jpf-i4PtF1p65i5g73BAbms0agWc",
     // googleMapsApiKey: "AIzaSyBvtNQDxMuJz0QSNvAuepTvFVka60sv588",
-    googleMapsApiKey: "AIzaSyBdWmYu_njpBYS4im2omZNkmtwvq3xqkZ8",
+    googleMapsApiKey: "AIzaSyATZM_-9TmFhgxdiH12ZFGfk8y264J3PQ4",
     libraries: ["places"],
   });
 
@@ -68,6 +68,43 @@ const Map = () => {
       setZoom(14);
     }
   }, [currentLocation]);
+
+
+  const fetchAddress = async (lat, lng) => {
+    const apiKey = "AIzaSyATZM_-9TmFhgxdiH12ZFGfk8y264J3PQ4";
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        const formattedAddress = data.results[0].formatted_address;
+        console.log(formattedAddress);
+        setAddress(formattedAddress);
+        setCurrentAddress({
+          address: formattedAddress,
+          lat,
+          lng,
+          time: new Date(),
+        });
+
+        setFormState((prevState) => ({
+          ...prevState,
+          location: formattedAddress,
+        }));
+      } else {
+        console.error("No address found for the given coordinates.");
+      }
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  };
+
+
+
+
+
 
   useEffect(() => {
 
@@ -125,44 +162,20 @@ const Map = () => {
     scaledSize: new window.google.maps.Size(90, 60),
   };
 
-  const fetchAddress = async (lat, lng) => {
-    const apiKey = "AIzaSyBdWmYu_njpBYS4im2omZNkmtwvq3xqkZ8";
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.status === "OK" && data.results.length > 0) {
-        const formattedAddress = data.results[0].formatted_address;
-        console.log(formattedAddress);
-        setAddress(formattedAddress);
-        setCurrentAddress({
-          address: formattedAddress,
-          lat,
-          lng,
-          time: new Date(),
-        });
-
-        setFormState((prevState) => ({
-          ...prevState,
-          location: formattedAddress,
-        }));
-      } else {
-        console.error("No address found for the given coordinates.");
-      }
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    }
-  };
   
 
   return (
-    <GoogleMap mapContainerStyle={mapContainerStyle} zoom={zoom} center={center} onClick={(e) => onMapClick(e)}>
+    <GoogleMap
+      mapContainerStyle={mapContainerStyle}
+      zoom={zoom}
+      center={center}
+      onClick={(e) => onMapClick(e)}
+    >
       {currentStep !== 1 &&
         markers?.map((marker, index) => (
           <Marker
-            key={marker.time.toISOString()}
+            key={`${index}-${marker.time.toISOString()}`}
             position={{ lat: marker.lat, lng: marker.lng }}
             draggable={currentStep !== 2}
             icon={customIcon}
@@ -170,7 +183,9 @@ const Map = () => {
               if (currentStep !== 1) return;
               const newLat = e.latLng.lat();
               const newLng = e.latLng.lng();
-              const updatedMarkers = markers.map((m, i) => (i === index ? { ...m, lat: newLat, lng: newLng } : m));
+              const updatedMarkers = markers.map((m, i) =>
+                i === index ? { ...m, lat: newLat, lng: newLng } : m
+              );
 
               setMarkers(updatedMarkers);
               console.log("Marker moved to:", { lat: newLat, lng: newLng });

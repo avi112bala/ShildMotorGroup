@@ -148,6 +148,10 @@ const downloadInvoice = () => {
   const formattedDate = new Date(InvoiceData?.createdAt).toLocaleDateString(
     "en-GB"
   );
+
+    const dueDate = new Date(InvoiceData?.createdAt);
+    dueDate.setDate(dueDate.getDate() + 45);
+    const formattedDueDate = dueDate.toLocaleDateString("en-GB");
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 bg-white shadow-md rounded-lg">
       {/* Header */}
@@ -159,7 +163,9 @@ const downloadInvoice = () => {
           <p className="text-gray-600">Invoice Date: {formattedDate}</p>
         </div>
         <div className="mt-4 sm:mt-0 text-right">
-          <p className="text-gray-800 font-semibold">Balance Due: 07/25/2025</p>
+          <p className="text-gray-800 font-semibold">
+            Balance Due: {formattedDueDate}
+          </p>
           <p className="text-lg font-bold text-green-600">
             ${InvoiceData?.totalAmount?.toFixed(2)}
           </p>

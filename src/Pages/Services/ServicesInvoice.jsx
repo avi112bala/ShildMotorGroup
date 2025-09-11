@@ -79,48 +79,75 @@ getDistance(
   //      return amount
   // }
 
- const totalamount = () => {
-   const miles = parseFloat(totalmiles.replace(/,/g, "")) * 0.621371;
-   console.log(miles,"miles");
-   
-   let amount = 0;
+const totalamount = () => {
+  const miles = parseFloat(totalmiles.replace(/,/g, "")) * 0.621371;
+  const hours = parseFloat(totaltime) || 0; // ensure it's a number
 
-   if (miles > 0 && miles <= 200) {
-     // hourly rate instead of per-mile
-     amount = totaltime * 80; // totaltime = hours from DistanceMatrix
-   } else if (miles > 350 && miles <= 400) {
-     amount = 3.5 * miles;
-   } else if (miles > 400 && miles <= 1000) {
-     amount = 3.0 * miles;
-   } else if (miles > 1000) {
-     // pick a base rate, e.g. $2.80
-     amount = 2.8 * miles;
-   }
+  if (isNaN(miles)) {
+    console.error("Invalid miles value:", totalmiles);
+    return;
+  }
 
-   // Service-specific adjustments
-   if (
-     senderdata?.ServiceData?.title === "Refrigerated Division" &&
-     senderdata?.secondoption === "tendemaxle"
-   ) {
-     amount = 3.0 * miles;
-   } else if (
-     senderdata?.ServiceData?.title === "Dry Division" &&
-     senderdata?.secondoption === "triaxle"
-   ) {
-     amount = 3.25 * miles;
-   } else {
-     // default fallback
-     amount = amount || 2.75 * miles;
-   }
+  console.log(miles, "miles");
 
-   updateSenderData({ key: "totalAmount", value: amount?.toFixed(2) });
-   return amount;
- };
+  let amount = 0;
+
+  if (miles > 0 && miles <= 200) {
+    amount = hours * 80;
+  } else if (miles > 350 && miles <= 400) {
+    amount = 3.5 * miles;
+  } else if (miles > 400 && miles <= 1000) {
+    amount = 3.0 * miles;
+  } else if (miles > 1000) {
+    amount = 2.8 * miles;
+  }
+
+  if (
+    senderdata?.ServiceData?.title === "Refrigerated Division" &&
+    senderdata?.secondoption === "tendemaxle"
+  ) {
+    amount = 3.0 * miles;
+  } else if (
+    senderdata?.ServiceData?.title === "Dry Division" &&
+    senderdata?.secondoption === "triaxle"
+  ) {
+    amount = 3.25 * miles;
+  } else {
+    amount = amount || 2.75 * miles;
+  }
+
+  updateSenderData({ key: "totalAmount", value: amount.toFixed(2) });
+  return amount;
+};
+
+console.log(totalamount, "totalamount");
 
 
-  useEffect(()=>{
-    totalamount()
-  },[])
+
+
+useEffect(() => {
+  if (totalmiles && totaltime) {
+    totalamount();
+  }
+}, [totalmiles, totaltime]);
+
+useEffect(() => {
+  if (
+    senderdata?.senderDetails?.senderFullAddress &&
+    senderdata?.receiverDetails?.receiverFullAddress
+  ) {
+    getDistance(
+      senderdata.senderDetails.senderFullAddress,
+      senderdata.receiverDetails.receiverFullAddress,
+      (res) => {
+        setTotalmiles(res.distance);
+        setTotaltime(res.totalhours);
+        console.log("Distance:", res.distance, "Total Hours:", res.totalhours);
+      }
+    );
+  }
+}, [senderdata]);
+
   
   if (!senderdata) {
     return (
